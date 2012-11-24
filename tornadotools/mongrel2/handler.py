@@ -20,6 +20,7 @@
 import uuid
 
 from tornado.httpserver import HTTPRequest
+from tornado.httputil import HTTPHeaders
 
 import zmq
 from zmq.eventloop import stack_context
@@ -120,7 +121,7 @@ class MongrelConnection(object):
             method=headers.get("METHOD"),
             uri=self.m2req.path,
             version=headers.get("VERSION"),
-            headers=headers,
+            headers=HTTPHeaders(headers),
             remote_ip=headers.get("x-forwarded-for"))
 
         if len(self.m2req.body) > 0:
@@ -145,7 +146,7 @@ class MongrelConnection(object):
         else:
             self.request_callback(self._request)
 
-    def write(self, chunk):
+    def write(self, chunk, callback=None):
         """
         Write a chunk of data to the server.
         """
