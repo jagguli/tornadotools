@@ -31,7 +31,7 @@ class MongrelRequest(object):
 
     def __init__(self, sender, conn_id, path, headers, body):
         self.sender = sender
-        self.path = path
+        self.path = headers.get("URI", path)
         self.conn_id = conn_id
         self.headers = headers
         self.body = body
