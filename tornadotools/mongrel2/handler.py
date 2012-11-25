@@ -20,7 +20,7 @@
 import uuid
 
 from tornado.httpserver import HTTPRequest
-from tornado.httputil import HTTPHeaders
+from tornado.httputil import HTTPHeaders, parse_body_arguments
 
 import zmq
 from zmq.eventloop import stack_context
@@ -126,6 +126,11 @@ class MongrelConnection(object):
 
         if len(self.m2req.body) > 0:
             self._request.body = self.m2req.body
+            if self._request.method in ("POST", "PATCH", "PUT"):
+                parse_body_arguments(
+                    self._request.headers.get("Content-Type", ""),
+                    self._request.body,
+                    self._request.arguments, self._request.files)
 
         if self.m2req.is_disconnect():
             self.finish()
