@@ -79,7 +79,7 @@ class Route(object):
         """
         Called when we decorate a class.
         """
-        name = self.name or handler.__name__
+        name = self.name
         spec = URLSpec(self.route, handler, self.initialize, name=name)
         self._routes.append({'host': self.host, 'spec': spec})
         return handler
@@ -94,3 +94,17 @@ class Route(object):
                 application.add_handlers(route['host'], route['spec'])
         else:
             return [route['spec'] for route in cls._routes]
+
+
+class Routes(object):
+    def __init__(self, *routes):
+        self.routes = routes
+
+    def __call__(self, handler):
+        for route in self.routes:
+            if isinstance(route, tuple) or \
+                    isinstance(route, list):
+                route = Route(*route)
+            else:
+                route = Route(route)
+            route(handler)
