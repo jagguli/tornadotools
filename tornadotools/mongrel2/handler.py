@@ -23,8 +23,8 @@ from tornado.httpserver import HTTPRequest
 from tornado.httputil import HTTPHeaders, parse_body_arguments
 
 import zmq
-from zmq.eventloop import stack_context
-from zmq.eventloop.ioloop import IOLoop
+from zmq.eventloop.minitornado import stack_context
+from zmq.eventloop.minitornado.ioloop import IOLoop
 from zmq.eventloop.zmqstream import ZMQStream
 
 from .request import MongrelRequest
@@ -178,3 +178,6 @@ class MongrelConnection(object):
         header = "%s %d:%s," % (uuid, len(str(conn_id)), str(conn_id))
         zmq_message = header + ' ' + msg
         self.stream.send(zmq_message)
+        
+    def set_close_callback(self, callback):
+        pass
